@@ -1,0 +1,24 @@
+{
+    "debugMode"     : true,
+    "frameRate"     : 60,
+    "id"            : "gameCanvas",
+    "renderMode"    : 1,
+    "jsList"        : [
+        "src/FrameWorks/Map.js",
+        "src/GUI_Config.js",
+        "src/ModuleConfig.js",
+        "src/Base/BaseController.js",
+        "src/FrameWorks/Network/BinaryStream.js",
+        "src/FrameWorks/Network/Network.js",
+        "src/FrameWorks/NMBaseMessage.js",
+        "src/FrameWorks/Load.js",
+        "src/FrameWorks/CocosStudio.js",
+        "src/Mvc/engine/MvcEngine.js",
+        "src/Common/MessageTypeCommon.js",
+        "src/Globals.js",
+        "src/Common/Client2ServerCommon.js",
+        "src/Common/Server2ClientCommon.js",
+        "src/Game/Login/Logic/DeleteUserLogic.js",
+        "src/Game/Login/Controller/DeleteUserController.js"
+    ]
+}
