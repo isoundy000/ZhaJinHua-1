@@ -119,7 +119,7 @@ var LoginLogic= cc.Layer.extend({
         this.btn_reg.setVisible(isVisible);
     },
     //微信登录
-    responseByWebChatLogin:function(){
+    responseByWebChatLogin:function(nmBaseMessage){
         //拼接字符串，转换为函数名
         var funcName= "read"+ nmBaseMessage.getMsgType();
         //调用在Global.js中自定义的函数，用于读取不同消息中的用户数据
@@ -225,11 +225,12 @@ var LoginLogic= cc.Layer.extend({
                 alert("请先同意用户协议！");
                 return;
             }else{
-                if(isWebChatBrowser()){
-                    sendWEBCHAT_LOGIN(self.responseByWebChatLogin);
-                }else{
-                    alert("请在微信浏览器中打开！");
-                }
+                sendWEBCHAT_LOGIN(self.responseByWebChatLogin);
+//                if(isWebChatBrowser()){
+//                    sendWEBCHAT_LOGIN(self.responseByWebChatLogin);
+//                }else{
+//                    alert("请在微信浏览器中打开！");
+//                }
             }
         }
     },

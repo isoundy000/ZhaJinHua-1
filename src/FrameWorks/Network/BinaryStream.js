@@ -128,13 +128,13 @@ if(typeof g_DataType== "undefined"){
             this.pool = binaryPot.writeUTF(array);
         }
         var self = this;
-        //当前流执行的起始位置
-        this.position = 0;
-        //当前流写入的多少字节
-        this.writen = 0;
+        //当前流执行的起始位置(读)
+        this.readPos = 0;
+        //当前流写入的多少字节(写)
+        this.writenPos = 0;
         //返回当前流执行的起始位置是否已经大于整个流的长度
         this.check = function () {
-            return self.position >= self.pool.length
+            return self.readPos >= self.pool.length
         };
     }
     /**
@@ -147,6 +147,19 @@ if(typeof g_DataType== "undefined"){
     };
     Stream.prototype = {
         /**
+         * Func:获取读取位置
+         */
+        getReadPos:function(){
+            return this.readPos;
+        },
+        /**
+         * Func:设置读取位置
+         * @param pos
+         */
+        setReadPos:function(pos){
+            this.readPos= ((pos== undefined)?this.readPos:pos);
+        },
+        /**
          * 从缓冲区读取4个字节的长度并转换为int值,position往后移4位
          * @returns {Number} 读取到的数字
          * @description 如果position大于等于缓冲区的长度则返回-1
@@ -157,7 +170,7 @@ if(typeof g_DataType== "undefined"){
             }
             var end = "";
             for (var i = 0; i < 4; i++) {
-                end += this.pool[this.position++].toString(16)
+                end += this.pool[this.readPos++].toString(16)
             }
             return parseInt(end, 16);
         },
@@ -172,7 +185,7 @@ if(typeof g_DataType== "undefined"){
             }
             var end = "";
             for (var i = 0; i < 2; i++) {
-                end += this.pool[this.position++].toString(16);
+                end += this.pool[this.readPos++].toString(16);
             }
             return parseInt(end, 16);
         },
@@ -187,7 +200,7 @@ if(typeof g_DataType== "undefined"){
             }
             var end = "";
             for (var i = 0; i < 8; i++) {
-                end += this.pool[this.position++].toString(16)
+                end += this.pool[this.readPos++].toString(16)
             }
             return parseInt(end, 16);
         },
@@ -200,7 +213,7 @@ if(typeof g_DataType== "undefined"){
             if (this.check()) {
                 return -1
             }
-            var val = this.pool[this.position++];
+            var val = this.pool[this.readPos++];
             if (val > 255) {
                 val &= 255;
             }
@@ -216,8 +229,8 @@ if(typeof g_DataType== "undefined"){
             //其中，2个是后台传递前台时，多传了两个字符串结束符(EOF)
             //小端字节和大端字节的转换，EOF放在字节流的前面
             //将arrayBuffer按照DataView视图读取方式读取
-            var binary= new Uint8Array(this.arrayBuffer.slice(this.position+ 2, this.position+ len));
-            this.position+= len;
+            var binary= new Uint8Array(this.arrayBuffer.slice(this.readPos+ 2, this.readPos+ len));
+            this.readPos+= len;
             return this.binaryArrayToString(binary);
         },
         /*
@@ -241,7 +254,7 @@ if(typeof g_DataType== "undefined"){
          */
         writeUTF16: function (str) {
             //是否预留了消息长度(Short类型)
-            if(this.writen<= 1){
+            if(this.writenPos<= 1){
                 this.writeShort(0);
             }
             var buf = new ArrayBuffer(str.length* 2+ 2); // 2 bytes for each char
@@ -257,12 +270,12 @@ if(typeof g_DataType== "undefined"){
 
             this.copyBufferToArray(buf);
 
-            this.writen += (str.length* 2+ 2);
+            this.writenPos += (str.length* 2+ 2);
         },
         //Byte类型
         writeByte: function (value) {
             //是否预留了消息长度(Short类型)
-            if(this.writen<= 1){
+            if(this.writenPos<= 1){
                 this.writeShort(0);
             }
             var buf = new ArrayBuffer(1); // 2 bytes for each char
@@ -273,7 +286,7 @@ if(typeof g_DataType== "undefined"){
 
             this.copyBufferToArray(buf);
 
-            this.writen += 1;
+            this.writenPos += 1;
         },
         //Short类型
         writeShort: function (value) {
@@ -285,12 +298,12 @@ if(typeof g_DataType== "undefined"){
 
             this.copyBufferToArray(buf);
 
-            this.writen += 2;
+            this.writenPos += 2;
         },
         //Int类型
         writeInt: function (value) {
             //是否预留了消息长度(Short类型)
-            if(this.writen<= 1){
+            if(this.writenPos<= 1){
                 this.writeShort(0);
             }
             var buf = new ArrayBuffer(4); // 4 bytes for each char
@@ -301,12 +314,12 @@ if(typeof g_DataType== "undefined"){
 
             this.copyBufferToArray(buf);
 
-            this.writen += 4;
+            this.writenPos += 4;
         },
         //Long类型
         writeLong: function (value) {
             //是否预留了消息长度(Short类型)
-            if(this.writen<= 1){
+            if(this.writenPos<= 1){
                 this.writeShort(0);
             }
             var buf = new ArrayBuffer(8); // 8 bytes for each char
@@ -321,7 +334,7 @@ if(typeof g_DataType== "undefined"){
 
             this.copyBufferToArray(buf);
 
-            this.writen += 8;
+            this.writenPos += 8;
         },
         /**
          * 把缓冲区字节流的格式从0至256的区间改为-128至128的区间
@@ -387,7 +400,7 @@ if(typeof g_DataType== "undefined"){
         },
         clear: function () {
             this.pool = [];
-            this.writen = this.position = 0;
+            this.writenPos = this.readPos = 0;
         }
     };
     return Stream;

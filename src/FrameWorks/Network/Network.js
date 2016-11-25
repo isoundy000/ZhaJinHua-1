@@ -9,10 +9,15 @@ var Network  = (function(){
             socket:null,
             isConnect:false,
             callback:null,
+            heartBeat_timer:null,//心跳定时器
             //初始化网络配置
             initNetwork:function(){
                 console.log('Network initSocket...');
-                this.initWebSocket();
+                if(window.WebSocket){
+                    this.initWebSocket();
+                }else{
+                    alert("该浏览器不支持WebSocket!");
+                }
             },
 
             //初始化WebSocket
