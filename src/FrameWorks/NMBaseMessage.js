@@ -1,19 +1,11 @@
 function NMBaseMessage(arraybuffer){
-    //数据成员
-    this.m_binaryStream= null;//二进制数据
-    this.m_type= 0;//消息ID(Int类型)
-    this.m_arrayBuffer= ((arraybuffer== undefined)?null:arraybuffer);//消息ArrayBuffer
-    this.m_extData= 0;//预留字段
-    this.m_msgVer= 0;//消息版本
-    this.m_userID= 0;//玩家ID
+    this.setArrayBuffer= function(arrayBuffer){//设置消息
+        this.m_arrayBuffer=((arrayBuffer== undefined)?0:arrayBuffer);
+    };
 
     //成员函数
     this.setMessageType= function(type){//设置消息类型
         this.m_type=((type== undefined)?0:type);
-    };
-
-    this.setArrayBuffer= function(arrayBuffer){//设置消息
-        this.m_arrayBuffer=((arrayBuffer== undefined)?0:arrayBuffer);
     };
 
     //获取ArrayBuffer
@@ -22,13 +14,23 @@ function NMBaseMessage(arraybuffer){
     };
     //获取消息ID
     this.getMsgType= function(){
-      return this.m_type;
+        return this.m_type;
+    };
+
+    this.clear= function(){
+        //数据成员
+        this.m_binaryStream= null;//二进制数据
+        this.m_type= 0;//消息ID(Int类型)
+        this.m_arrayBuffer= ((arraybuffer== undefined)?null:arraybuffer);//消息ArrayBuffer
+        this.m_extData= 0;//预留字段
+        this.m_msgVer= 0;//消息版本
+        this.m_userID= 0;//玩家ID
     };
 
     //开始读取
     this.readImpl= function(){
         this.m_binaryStream.readShort();//读取消息长度
-        this.m_type= this.m_binaryStream.readInt();//消息ID
+        this.m_type= this.m_binaryStream.readIntByString();//消息ID
         this.m_extData= this.m_binaryStream.readByte();//预留字段
         this.m_msgVer= this.m_binaryStream.readByte();//消息版本
         this.m_userID= this.m_binaryStream.readInt();//UserID
@@ -54,6 +56,9 @@ function NMBaseMessage(arraybuffer){
 
     //开始写消息
     this.readStart= function(){
+        //清空数据
+        this.clear();
+
         //**************二进制数组传递方式****************/
         this.m_binaryStream= BinaryStream(this.m_arrayBuffer);
         this.readImpl();//读取消息头

@@ -10,10 +10,10 @@ function sendWEBCHAT_LOGIN(callback){
     nmBaseMessage.writeStart();//准备写消息
 
     nmBaseMessage.writeUTF16("");//IMEI
-    nmBaseMessage.writeUTF16("xxl");//昵称
+    nmBaseMessage.writeUTF16("龙");//昵称
     nmBaseMessage.writeUTF16("128821");//密码
 
-    nmBaseMessage.writeInt(1);//版本号
+    nmBaseMessage.writeInt(VERSION);//版本号
 
     nmBaseMessage.writeUTF16("ChangeID");//注册渠道号
 

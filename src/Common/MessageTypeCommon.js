@@ -6,5 +6,8 @@ const ACK = 0x80000000;
 //基础消息头
 const BASEID = 0x00010000;
 
+//版本号
+const VERSION= 0x04000000;
+
 //登录
 const BASEID_LOGIN = BASEID + 2;

@@ -122,10 +122,11 @@ var LoginLogic= cc.Layer.extend({
     responseByWebChatLogin:function(nmBaseMessage){
         //拼接字符串，转换为函数名
         var funcName= "read"+ nmBaseMessage.getMsgType();
+        alert("读取"+ funcName);
         //调用在Global.js中自定义的函数，用于读取不同消息中的用户数据
         var dataMap= eval(funcName)(nmBaseMessage);
         //目前是显性授权
-        window.location.href= 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+ dataMap.get("appID")+'&redirect_uri=http%3a%2f%2fh5.tongqutongqu.cn%2ftest.html&response_type=code&scope=snsapi_userinfo&state=STATE%23wechat_redirect';
+        //window.location.href= 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+ dataMap.get("appID")+'&redirect_uri=http%3a%2f%2fh5.tongqutongqu.cn%2ftest.html&response_type=code&scope=snsapi_userinfo&state=STATE%23wechat_redirect';
     },
     //一键注册
     onBtn_RegEvent:function(pSender, Type){
@@ -152,7 +153,7 @@ var LoginLogic= cc.Layer.extend({
 //                }else{
 //                    alert("请在微信浏览器中打开！");
 //                }
-            }
+        }
         }
     },
     //已有账户

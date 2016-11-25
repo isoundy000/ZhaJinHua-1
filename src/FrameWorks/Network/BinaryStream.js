@@ -175,6 +175,25 @@ if(typeof g_DataType== "undefined"){
             return parseInt(end, 16);
         },
         /**
+         * 从缓冲区读取4个字节的长度并转换为int值,position往后移4位【仅限于读取消息ID】
+         * @returns {Number} 读取到的数字
+         * @description 如果position大于等于缓冲区的长度则返回-1
+         */
+        readIntByString: function () {
+            if (this.check()) {
+                return -1
+            }
+            var end = "";
+            for (var i = 0; i < 4; i++) {
+                //使用toString(16)，会将(01)等值，直接转换为1，去除了0
+                var value= this.pool[this.readPos].toString(16);
+                value= ((parseInt(value)< 10)?('0'+value):value);
+                end += value;
+                this.readPos++;
+            }
+            return end;
+        },
+        /**
          * 从缓冲区读取2个字节的长度并转换为short值,position往后移2位
          * @returns {Number} 读取到的数字
          * @description 如果position大于等于缓冲区的长度则返回-1
@@ -220,16 +239,32 @@ if(typeof g_DataType== "undefined"){
             return val;
         },
         /**
-         * 方法二:使用getUnit8方法
+         * 方法二:使用Unit8Array方法-英文
+         * 从缓冲区的position位置按UTF8的格式读取字符串,position往后移指定的长度
+         * @returns {String} 读取的字符串
+         */
+        readUTF8: function () {
+            var len= this.readShort();
+            //其中，2个是后台传递前台时，多传了两个字符串结束符(EOF)
+            //BOM =  FF FE
+            //小端字节和大端字节的转换，EOF放在字节流的前面
+            //将arrayBuffer按照DataView视图读取方式读取
+            var binary= new Uint8Array(this.arrayBuffer.slice(this.readPos+ 2, this.readPos+ len));
+            this.readPos+= len;
+            return this.binaryArrayToString(binary);
+        },
+        /**
+         * 方法二:使用Unit16Array方法-中文
          * 从缓冲区的position位置按UTF8的格式读取字符串,position往后移指定的长度
          * @returns {String} 读取的字符串
          */
         readUTF16: function () {
             var len= this.readShort();
             //其中，2个是后台传递前台时，多传了两个字符串结束符(EOF)
+            //BOM =  FF FE
             //小端字节和大端字节的转换，EOF放在字节流的前面
             //将arrayBuffer按照DataView视图读取方式读取
-            var binary= new Uint8Array(this.arrayBuffer.slice(this.readPos+ 2, this.readPos+ len));
+            var binary= new Uint16Array(this.arrayBuffer.slice(this.readPos+ 2, this.readPos+ len));
             this.readPos+= len;
             return this.binaryArrayToString(binary);
         },
@@ -257,20 +292,27 @@ if(typeof g_DataType== "undefined"){
             if(this.writenPos<= 1){
                 this.writeShort(0);
             }
-            var buf = new ArrayBuffer(str.length* 2+ 2); // 2 bytes for each char
+            //Short字符串长度(2个字节)
+            //FFFE Bom(2个字节)
+            var length= str.length* 2+ 2+ 2;// 2 bytes for each char
+
+            var buf = new ArrayBuffer(length);
             var x= new DataView(buf);
 
             //Short类型传递长度
-            x.setInt16(0, str.length* 2);
+            x.setInt16(0, str.length* 2+ 2);
 
-            var bufView = new Uint16Array(buf, 2);
+            //添加Bom(FFFE = 65534)
+            x.setInt16(2, 65534);
+
+            var bufView = new Uint16Array(buf, 4);
             for (var i=0; i< str.length; i++) {
                 bufView[i] = str.charCodeAt(i);
             }
 
             this.copyBufferToArray(buf);
 
-            this.writenPos += (str.length* 2+ 2);
+            this.writenPos += (length);
         },
         //Byte类型
         writeByte: function (value) {

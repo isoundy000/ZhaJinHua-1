@@ -2,7 +2,7 @@
  * Func:服务器-->客户端的消息
  */
 //读取微信登录
-function read2147549186(nmBaseMessage){
+function read80010002(nmBaseMessage){
     var dataMap= new Map();
     //存放消息类型和消息名
     dataMap.put("messageType", ACK + BASEID_LOGIN);
@@ -30,9 +30,6 @@ function read2147549186(nmBaseMessage){
     dataMap.put("VipLevel", nmBaseMessage.readInt());
     //yuanbao Int 元宝
     dataMap.put("yuanbao", nmBaseMessage.readInt());
-
-    //打印后台传过来的文件信息
-    console.log(dataMap);
 
     return dataMap;
 }
