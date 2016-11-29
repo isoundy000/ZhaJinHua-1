@@ -154,7 +154,6 @@ var Network= {
         if (!this.isConnect){
             console.log('Network is not inited...');
         }else if(this.webSocket.readyState == WebSocket.OPEN){
-            console.log('Network send:'+data);
             if(((Object.prototype.toString.call(data) == "[object ArrayBuffer]"))){
                 this.webSocket.send(data);
             }else{//Text文本格式传输
@@ -199,7 +198,7 @@ var Network= {
             }
         }
     },
-    //结束读写
+    //发送消息
     sendMessage:function(nmBassMessage, callback){
         if(typeof nmBassMessage!= "object") return;
         this.callback= callback== undefined?null:callback;

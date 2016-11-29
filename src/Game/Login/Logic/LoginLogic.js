@@ -43,6 +43,10 @@ var LoginLogic= cc.Layer.extend({
 
         //同意用户协议,默认同意[CheckBox控件]
         this.check_agree.setSelectedState(true);
+
+        if(window.localStorage&&(window.localStorage.getItem("NickName"))&&(window.localStorage.getItem("Password"))){
+            g_userLists.put(window.localStorage.getItem("NickName"),window.localStorage.getItem("Password"));
+        }
     },
     createUserNameEditor:function(){
         this.edit_username= cc.EditBox.create(cc.size(356, 53), cc.Scale9Sprite.create("#ui_opacity_1-1.png"));
@@ -118,11 +122,35 @@ var LoginLogic= cc.Layer.extend({
         this.btn_olduser_login.setVisible(isVisible);
         this.btn_reg.setVisible(isVisible);
     },
+    //已有账户登录
+    responseByLogin:function(nmBaseMessage){
+        if(parseInt(nmBaseMessage.getMsgType(), 16)== (ACK+ BASEID_LOGIN)) {
+            //拼接字符串，转换为函数名
+            var funcName= "read"+ nmBaseMessage.getMsgType();
+            //调用在Global.js中自定义的函数，用于读取不同消息中的用户数据
+            var dataMap= eval(funcName)(nmBaseMessage);
+
+            /********本地存储*********/
+            if(window.localStorage) {
+                window.localStorage.setItem("NickName", dataMap.get("NickName"));
+                window.localStorage.setItem("PhotoUrl", dataMap.get("PhotoUrl"));
+                window.localStorage.setItem("YuanBao", dataMap.get("yuanbao"));
+                window.localStorage.setItem("Coin", dataMap.get("Coin"));
+
+                window.localStorage.setItem("SessionID", dataMap.get("SessionID"));
+                window.localStorage.setItem("UnreadMsgCnt", dataMap.get("UnreadMsgCnt"));
+                window.localStorage.setItem("VipLevel", dataMap.get("VipLevel"));
+            }
+
+            if(dataMap.get("result")== 0){
+                MvcEngine.getInstance().setNeedCreateModuleName(GUI_HALL);
+            }
+        }
+    },
     //微信登录
     responseByWebChatLogin:function(nmBaseMessage){
         //拼接字符串，转换为函数名
         var funcName= "read"+ nmBaseMessage.getMsgType();
-        alert("读取"+ funcName);
         //调用在Global.js中自定义的函数，用于读取不同消息中的用户数据
         var dataMap= eval(funcName)(nmBaseMessage);
         //目前是显性授权
@@ -133,8 +161,35 @@ var LoginLogic= cc.Layer.extend({
         var self= this.getParent();
         if(!self.m_bEnabled) return;
         if(ccui.Widget.TOUCH_ENDED== Type){
-            MvcEngine.getInstance().setNeedCreateModuleName(GUI_HALL);
+            sendBASEID_RESGISTER("", self.responseByRegister);
         }
+    },
+    //微信登录
+    responseByRegister:function(nmBaseMessage){
+        //十六进制数-->十进制 数据比较 parseInt(nmBaseMessage.getMsgType(), 16)
+        //Todo:为了避免一键注册时，后台多次返回
+        if(parseInt(nmBaseMessage.getMsgType(), 16)== (ACK+ BASEID_REGISTER)){
+            //拼接字符串，转换为函数名
+            var funcName= "read"+ nmBaseMessage.getMsgType();
+            //调用在Global.js中自定义的函数，用于读取不同消息中的用户数据
+            var dataMap= eval(funcName)(nmBaseMessage);
+            //昵称
+            if(window.localStorage){//如果支持本地存储
+                window.localStorage.setItem("NickName", dataMap.get("NickName"));
+                window.localStorage.setItem("Password", dataMap.get("Password"));
+                window.localStorage.setItem("PhotoUrl", dataMap.get("PhotoUrl"));
+                window.localStorage.setItem("YuanBao", dataMap.get("Yuanbao"));
+                window.localStorage.setItem("Coin", dataMap.get("Coin"));
+                window.localStorage.setItem("Honor", dataMap.get("honor"));
+
+                console.log(dataMap.get("NickName")+" "+ dataMap.get("Password"));
+
+                MvcEngine.getInstance().setNeedCreateModuleName(GUI_HALL);
+            }else{
+                alert("不支持本地存储！");
+            }
+        }
+        //游客21441184 178bdb
     },
     //微信登录
     onBtn_Weixin_LoginEvent:function(pSender, Type){
@@ -148,11 +203,6 @@ var LoginLogic= cc.Layer.extend({
             }else{
                 //首先，先不判断是否为微信浏览器
                 sendWEBCHAT_LOGIN(self.responseByWebChatLogin);
-//                if(isWebChatBrowser()){
-//                    sendWEBCHAT_LOGIN(self.responseByWebChatLogin);
-//                }else{
-//                    alert("请在微信浏览器中打开！");
-//                }
         }
         }
     },
@@ -226,12 +276,7 @@ var LoginLogic= cc.Layer.extend({
                 alert("请先同意用户协议！");
                 return;
             }else{
-                sendWEBCHAT_LOGIN(self.responseByWebChatLogin);
-//                if(isWebChatBrowser()){
-//                    sendWEBCHAT_LOGIN(self.responseByWebChatLogin);
-//                }else{
-//                    alert("请在微信浏览器中打开！");
-//                }
+                sendWEBCHAT_LOGIN(window.localStorage.getItem("NickName"), window.localStorage.getItem("Password"),self.responseByLogin);
             }
         }
     },

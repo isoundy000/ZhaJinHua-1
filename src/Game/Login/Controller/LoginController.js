@@ -38,8 +38,8 @@ var LoginController = BaseController.extend({
     destroyModule:function(){
         this.destroy();
 
-        this.m_logic.m_view.removeFromParentAndCleanup(true);
-        LoginLogic.removeFromParentAndCleanup(true);
+        this.m_logic.m_view.removeFromParent(true);
+        LoginLogic.removeFromParent(true);
 
         this.releaseData();
     },

@@ -39,8 +39,8 @@ var ResetPasswordController = BaseController.extend({
         console.log("销毁");
         this.destroy();
 
-        this.m_logic.m_view.removeFromParentAndCleanup(true);
-        ResetPasswordLogic.removeFromParentAndCleanup(true);
+        this.m_logic.m_view.removeFromParent(true);
+        ResetPasswordLogic.removeFromParent(true);
 
         this.releaseData();
     },

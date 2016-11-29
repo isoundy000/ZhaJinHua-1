@@ -12,7 +12,7 @@ var HallController = BaseController.extend({
     },
 
     createView:function(){
-        this.m_logic= new HallLogic();
+        this.m_logic= HallLogic;
         this.m_logic.createView();
         this.addChild(this.m_logic);
 

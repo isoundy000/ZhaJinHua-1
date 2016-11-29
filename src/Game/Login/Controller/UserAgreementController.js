@@ -38,8 +38,8 @@ var UserAgreementController = BaseController.extend({
     destroyModule:function(){
         console.log("销毁");
         this.destroy();
-        this.m_logic.m_view.removeFromParentAndCleanup(true);
-        UserAgreementLogic.removeFromParentAndCleanup(true);
+        this.m_logic.m_view.removeFromParent(true);
+        UserAgreementLogic.removeFromParent(true);
 
         this.releaseData();
     },

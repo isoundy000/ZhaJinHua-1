@@ -8,6 +8,10 @@ function NMBaseMessage(arraybuffer){
         this.m_type=((type== undefined)?0:type);
     };
 
+    this.setMsgVer= function(ver){//设置消息版本号
+        this.m_msgVer=((ver== undefined)?0:ver);
+    };
+
     //获取ArrayBuffer
     this.getArrayBuffer= function(){
         return this.m_arrayBuffer;

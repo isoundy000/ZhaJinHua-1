@@ -39,7 +39,7 @@ var LoadingController = BaseController.extend({
         console.log("销毁");
         this.destroy();
 
-        this.m_logic.m_view.removeFromParentAndCleanup(true);
+        this.m_logic.m_view.removeFromParent(true);
 
         this.releaseData();
     },

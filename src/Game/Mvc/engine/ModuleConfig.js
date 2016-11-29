@@ -70,6 +70,21 @@ g_ModuleTable[GUI_HALL]= {};
 g_ModuleTable[GUI_HALL]["jsLists"]= ["src/Game/Hall/Logic/HallLogic.js", "src/Game/Hall/Controller/HallController.js"];//所需要的JS文件数组
 g_ModuleTable[GUI_HALL]["Layer"]= g_LayerTag.Base_Layer;//层级
 g_ModuleTable[GUI_HALL]["resLists"]= [//所需要的资源列表
+    "res/Animation/Animation_Hall_Quick.ExportJson",
+    "res/Animation/Animation_Hall_Quick0.plist",
+    "res/Animation/Animation_Hall_Quick0.png",
+    "res/Animation/Yaoqianshu_Action_Enter_Animation.ExportJson",
+    "res/Animation/Yaoqianshu_Action_Enter_Animation0.plist",
+    "res/Animation/Yaoqianshu_Action_Enter_Animation0.png",
+    "res/Animation/Animation_Newhall_ClassicRoom.ExportJson",
+    "res/Animation/Animation_Newhall_ClassicRoom0.plist",
+    "res/Animation/Animation_Newhall_ClassicRoom0.png",
+    "res/Animation/Animation_Newhall_CheatKingRoom.ExportJson",
+    "res/Animation/Animation_Newhall_CheatKingRoom0.plist",
+    "res/Animation/Animation_Newhall_CheatKingRoom0.png",
+    "res/Animation/Animation_Newhall_TounamentRoom.ExportJson",
+    "res/Animation/Animation_Newhall_TounamentRoom0.plist",
+    "res/Animation/Animation_Newhall_TounamentRoom0.png",
     "res/Hall.json"
 ];
 //不能根据res/+ Table名+ 资源名读取的原因是:有时候不同页面可能会使用相同的资源，浪费流量

@@ -78,7 +78,7 @@ var MoreLogic= cc.Layer.extend({
         for(var i=0; i< 3; ++i){
             if(i< g_userLists.getSize()){
                 this.setUserListVisible(i, true);
-                this.m_nickNameLableTable[i].setText(g_userLists.elements[i].key);
+                this.m_nickNameLableTable[i].setString(g_userLists.elements[i].key);
             }else{
                 this.setUserListVisible(i, false);
             }
@@ -149,9 +149,9 @@ var MoreLogic= cc.Layer.extend({
             //判断变量是否定义
             if((typeof LoginLogic!= "undefined")&&(LoginLogic.m_bEnabled)){
                 //设置账号
-                LoginLogic.edit_username.setText(g_userLists.elements[id].key);
+                LoginLogic.edit_username.setString(g_userLists.elements[id].key);
                 //设置对应账号的密码
-                LoginLogic.edit_password.setText(g_userLists.elements[id].value);
+                LoginLogic.edit_password.setString(g_userLists.elements[id].value);
             }
             //判断是否已经定义
             if((typeof ResetPasswordLogic!= "undefined")&&(ResetPasswordLogic.m_bEnabled)){
